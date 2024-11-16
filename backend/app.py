@@ -121,9 +121,8 @@ def check_credentials_valid():
             time.sleep(20)
 
 
-# main method
-if __name__ == '__main__':
-    from backend.SystemBoundary import SystemBoundary
+def startAll():
+    from SystemBoundary import SystemBoundary
     with app.app_context():
         # create table structure
         db.create_all()
@@ -146,4 +145,10 @@ if __name__ == '__main__':
         # load configuration
         load_existing_configurations()
 
-    app.run(debug=True, use_reloader=False)
+
+startAll()
+
+
+# main method
+if __name__ == '__main__':
+    app.run(debug=True)
