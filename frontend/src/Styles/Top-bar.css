@@ -1,0 +1,47 @@
+/* Basic layout for the top-bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f8f9fa; /* Light gray background */
+  padding: 10px 20px; /* Add padding around the content */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for the bar */
+}
+
+/* Styling for the buttons */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the buttons have some spacing and don't stretch */
+.menu-button,
+.profile-button {
+  font-size: 1.5rem; /* Adjust the size of the icons */
+  color: #333; /* Icon color */
+}
+
+/* Title styling */
+.title {
+  flex-grow: 1; /* Allows the title to take up available space */
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Icon-specific styles */
+.icon {
+  font-size: 1.5rem; /* Ensure consistent icon size */
+  color: #333; /* Icon color */
+}
+
+/* Add hover effects */
+button:hover .icon {
+  color: #007bff; /* Change color on hover */
+}
