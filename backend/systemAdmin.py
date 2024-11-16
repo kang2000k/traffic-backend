@@ -1,8 +1,8 @@
 import bcrypt
 import io
 from flask import session
-from Model import SystemAdminModel, TokenModel, SCOPES, db
-import Model
+from backend.Model import SystemAdminModel, TokenModel, SCOPES, db
+from backend import Model
 import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
