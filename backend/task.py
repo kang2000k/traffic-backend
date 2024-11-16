@@ -4,8 +4,8 @@ import sys
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 import pandas as pd
-import Model
-from Model import TaskModel, ModelTrainedModel, db
+from backend import Model
+from backend.Model import TaskModel, ModelTrainedModel, db
 import io
 import ast
 
@@ -111,7 +111,7 @@ class Task:
     # deploy trained model
     @staticmethod
     def deployTrainedMLAlgorithm(task):
-        from app import app
+        from backend.app import app
         with app.app_context():
             accuracy_file = ''
             try:
