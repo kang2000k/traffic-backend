@@ -3,8 +3,8 @@ import time
 from flask_cors import CORS
 from datetime import timedelta
 import os
-from Model import db, SQLALCHEMY_DATABASE_URI, SCOPES
-import Model
+from backend.Model import db, SQLALCHEMY_DATABASE_URI, SCOPES
+from backend import Model
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -29,7 +29,7 @@ CORS(app, supports_credentials=True)
 
 # start google drive api service
 def start_drive_api_service():
-    from Model import TokenModel
+    from backend.Model import TokenModel
     # find token
     token = TokenModel.query.first()
     # check the token is existed
@@ -60,7 +60,7 @@ def start_drive_api_service():
 
 # set the number of thread pool executor
 def set_number_of_executor():
-    from Model import PullingConfigurationModel
+    from backend.Model import PullingConfigurationModel
     configs = PullingConfigurationModel.query.all()
     # check the number of configuration in the database  and set the number
     if len(configs) >= 5:
@@ -69,7 +69,7 @@ def set_number_of_executor():
 
 # get the configuration and start to pull data that in the database
 def load_existing_configurations():
-    from Model import PullingConfigurationModel
+    from backend.Model import PullingConfigurationModel
     from pullingConfiguration import pull_data_in_background
     configs = PullingConfigurationModel.query.all()
     for config in configs:
@@ -86,7 +86,7 @@ redis_client = redis.Redis.from_url(app.config['REDIS_URL'])
 
 # check the google drive api credential and token whether is valid in background
 def check_credentials_valid():
-    from Model import TokenModel
+    from backend.Model import TokenModel
     with app.app_context():
         # redis store task and status
         redis_client.hset('check_credentials_task', 'status', 'running')
@@ -123,7 +123,7 @@ def check_credentials_valid():
 
 # main method
 if __name__ == '__main__':
-    from SystemBoundary import SystemBoundary
+    from backend.SystemBoundary import SystemBoundary
     with app.app_context():
         # create table structure
         db.create_all()
