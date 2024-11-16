@@ -153,8 +153,8 @@ def editPullingConfiguration():
         data = request.get_json()
 
         # handle the header and params input
-        ori_header = f'{data.get('header')}'
-        ori_params = f'{data.get('params')}'
+        ori_header = f'{data.get("header")}'
+        ori_params = f'{data.get("params")}'
 
         # convert the pattern
         fixed_header = fix_string(ori_header)
@@ -275,7 +275,7 @@ def editTableConfiguration():
     try:
         # get the data from frontend
         data = request.get_json()
-        ori_params = f'{data.get('hyper_parameters')}'
+        ori_params = f'{data.get("hyper_parameters")}'
         # convert pattern
         fixed_params = fix_string(ori_params)
         print(data.get('columns'))
