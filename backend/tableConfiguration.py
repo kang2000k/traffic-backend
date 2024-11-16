@@ -1,6 +1,6 @@
 from googleapiclient.errors import HttpError
-from Model import ModelTypeModel, TableConfigurationModel, db
-import Model
+from backend.Model import ModelTypeModel, TableConfigurationModel, db
+from backend import Model
 
 
 # table configuration class
