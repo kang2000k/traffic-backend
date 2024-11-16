@@ -70,7 +70,7 @@ def set_number_of_executor():
 # get the configuration and start to pull data that in the database
 def load_existing_configurations():
     from backend.Model import PullingConfigurationModel
-    from pullingConfiguration import pull_data_in_background
+    from backend.pullingConfiguration import pull_data_in_background
     configs = PullingConfigurationModel.query.all()
     for config in configs:
         Model.executor.submit(pull_data_in_background, config.id)
