@@ -1,9 +1,9 @@
-from systemAdmin import SystemAdmin
-from pullingConfiguration import PullingConfiguration
-from tableConfiguration import TableConfiguration
-from trainedModel import TrainedMLAlgorithm
-from task import Task
-from modelType import ModelType
+from backend.systemAdmin import SystemAdmin
+from backend.pullingConfiguration import PullingConfiguration
+from backend.tableConfiguration import TableConfiguration
+from backend.trainedModel import TrainedMLAlgorithm
+from backend.task import Task
+from backend.modelType import ModelType
 
 
 # system admin login controller
