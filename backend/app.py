@@ -122,7 +122,7 @@ def check_credentials_valid():
 
 
 def startAll():
-    from SystemBoundary import SystemBoundary
+    from backend.SystemBoundary import SystemBoundary
     with app.app_context():
         # create table structure
         db.create_all()
