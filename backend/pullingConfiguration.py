@@ -5,10 +5,10 @@ import requests
 import time
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.errors import HttpError
-from Model import PullingConfigurationModel, db, drive_service
-import Model
+from backend.Model import PullingConfigurationModel, db, drive_service
+from backend import Model
 from contextlib import contextmanager
-from app import redis_client
+from backend.app import redis_client
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -113,7 +113,7 @@ class PullingConfiguration:
     # add new configuration
     @staticmethod
     def add_configuration(configuration):
-        from app import app
+        from backend.app import app
         with app.app_context():
             try:
                 # check the current workers whether is equal or more than the total workers
@@ -309,7 +309,7 @@ class PullingConfiguration:
 
 # pull data in the background
 def pull_data_in_background(config_id):
-    from app import app
+    from backend.app import app
     with app.app_context():
         # get the configuration by id
         config = PullingConfigurationModel.query.get(config_id)
