@@ -1,13 +1,13 @@
 from googleapiclient.errors import HttpError
-from Model import ModelTrainedModel, db
+from backend.Model import ModelTrainedModel, db
 import io
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 import pandas as pd
 import os
 import importlib.util
 import sys
-import Model
-from app import redis_client
+from backend import Model
+from backend.app import redis_client
 
 
 # model class
@@ -25,7 +25,7 @@ class TrainedMLAlgorithm:
     # train model
     @staticmethod
     def trainModel(model):
-        from app import app
+        from backend.app import app
         with app.app_context():
             import Model
             try:
@@ -52,7 +52,7 @@ class TrainedMLAlgorithm:
     # download the algorithm
     @staticmethod
     def download_model_algorithm(file_name, service):
-        from app import app
+        from backend.app import app
         with app.app_context():
             try:
                 # find the algorithm file
@@ -87,7 +87,7 @@ class TrainedMLAlgorithm:
     # import the algorithm
     @staticmethod
     def import_downloaded_algo(file):
-        from app import app
+        from backend.app import app
         with app.app_context():
             # Remove the .py extension to get the module name
             module_name = os.path.splitext(os.path.basename(file))[0]
@@ -107,7 +107,7 @@ class TrainedMLAlgorithm:
     # upload to google drive
     @staticmethod
     def upload_to_google_drive(model_id, model_file, accuracy_file, metric_file, service):
-        from app import app
+        from backend.app import app
         with app.app_context():
             try:
                 folder_id = '1GIkCJZ4Ly6hsMyRiLgQsDzEUnd_1g42T'
@@ -219,7 +219,7 @@ class TrainedMLAlgorithm:
     # get the model status
     @staticmethod
     def getModelStatus():
-        from app import app
+        from backend.app import app
         with app.app_context():
             # query the model
             models = ModelTrainedModel.query.all()
@@ -252,7 +252,7 @@ class TrainedMLAlgorithm:
 
 # train model in background
 def train_model_background(model_id, service):
-    from app import app
+    from backend.app import app
     with ((app.app_context())):
         try:
             # create and set the redis task details and status
