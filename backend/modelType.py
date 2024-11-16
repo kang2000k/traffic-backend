@@ -1,4 +1,4 @@
-from Model import ModelTypeModel
+from backend.Model import ModelTypeModel
 
 
 # model type class
