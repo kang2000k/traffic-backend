@@ -10,11 +10,9 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import redis
-from flask import Flask, request
-from google_auth_oauthlib.flow import InstalledAppFlow
+from flask import Flask
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 import threading
-
 
 app = Flask(__name__)
 
@@ -122,63 +120,6 @@ def check_credentials_valid():
                 redis_client.hset('check_credentials_task', 'status', 'error')
             time.sleep(20)
 
-
-@SystemBoundary.route('/callback')
-def callback():
-    try:
-        code = request.args.get('code')
-
-        # use credentials to get the drive access
-        flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callback')
-
-        creds = flow.fetch_token(authorization_response=request.url)
-
-        # build the system admin google drive service
-        Model.sys_service = build('drive', 'v3', credentials=creds)
-
-        # delete local credentials.json
-        if os.path.exists("credentials.json"):
-            os.remove("credentials.json")
-            print("Credentials file removed")
-
-        print('System Admin service is created successfully')
-        return True
-    except Exception as e:
-        print(e)
-        return False
-
-
-@SystemBoundary.route('/callbackR')
-def callbackR():
-    from backend.Model import TokenModel
-    try:
-        code = request.args.get('code')
-
-        # use credentials to get the drive access
-        flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
-        creds = flow.fetch_token(authorization_response=request.url)
-        try:
-            # store the token to database
-            token = TokenModel.query.first()
-            token.token = creds.to_json()
-            db.session.commit()
-            # re-build the drive service
-            Model.drive_service = build("drive", "v3", credentials=creds)
-        except Exception as e:
-            db.session.rollback()
-            return False
-        finally:
-            if os.path.exists("credentials.json"):
-                os.remove("credentials.json")
-                print("Credentials file removed")
-
-        print('System Admin service is created successfully')
-        return True
-    except Exception as e:
-        print(e)
-        return False
 
 def startAll():
     from backend.SystemBoundary import SystemBoundary
