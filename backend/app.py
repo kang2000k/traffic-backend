@@ -123,7 +123,7 @@ def check_credentials_valid():
             time.sleep(20)
 
 
-@app.route('/callback')
+@SystemBoundary.route('/callback')
 def callback():
     try:
         code = request.args.get('code')
@@ -149,7 +149,7 @@ def callback():
         return False
 
 
-@app.route('/callbackR')
+@SystemBoundary.route('/callbackR')
 def callbackR():
     from backend.Model import TokenModel
     try:
