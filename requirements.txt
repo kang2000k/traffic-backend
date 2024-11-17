@@ -99,6 +99,7 @@ safetensors==0.4.3
 scikeras==0.13.0
 scikit-learn==1.5.1
 scipy==1.14.1
+selenium==4.26.0
 setuptools==70.0.0
 shellingham==1.5.4
 simple-websocket==1.1.0
