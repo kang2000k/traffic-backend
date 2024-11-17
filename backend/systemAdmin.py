@@ -1,6 +1,6 @@
 import bcrypt
 import io
-from flask import session
+from flask import session, redirect
 from backend.Model import SystemAdminModel, TokenModel, SCOPES, db
 from backend import Model
 import os
@@ -69,24 +69,11 @@ class SystemAdmin:
                     print("Credentials file created")
 
                 # use credentials to get the drive access
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES, redirect_uri='https://traffic-backend-n4iz.onrender.com/')
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
+                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callback')
                 auth_url, _ = flow.authorization_url(prompt='consent')
-                print("Please visit this URL to authorize the application:")
-                print(auth_url)
 
-                code = input("Enter the authorization code: ")
-                creds = flow.fetch_token(authorization_response=code)
-
-                # build the system admin google drive service
-                Model.sys_service = build('drive', 'v3', credentials=creds)
-
-                # delete local credentials.json
-                if os.path.exists("credentials.json"):
-                    os.remove("credentials.json")
-                    print("Credentials file removed")
-
-                print('System Admin service is created successfully')
-                return True
+                return redirect(auth_url)
             else:
                 print("Credentials file is not found.")
                 return False
@@ -135,31 +122,12 @@ class SystemAdmin:
                     credentials_file.write(file_stream.read())
                     print("Credentials file created")
 
-                # use credentials file to create the token
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES, redirect_uri='https://traffic-backend-n4iz.onrender.com/')
+                # use credentials to get the drive access
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
+                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
                 auth_url, _ = flow.authorization_url(prompt='consent')
-                print("Please visit this URL to authorize the application:")
-                print(auth_url)
 
-                code = input("Enter the authorization code: ")
-                creds = flow.fetch_token(authorization_response=code)
-                try:
-                    # store the token to database
-                    token = TokenModel.query.first()
-                    token.token = creds.to_json()
-                    db.session.commit()
-                    # re-build the drive service
-                    Model.drive_service = build("drive", "v3", credentials=creds)
-                except Exception as e:
-                    db.session.rollback()
-                    return False
-                finally:
-                    if os.path.exists("credentials.json"):
-                        os.remove("credentials.json")
-                        print("Credentials file removed")
-
-                print('System Admin service is created successfully')
-                return True
+                return redirect(auth_url)
             else:
                 print("Credentials file is not found.")
                 return False
