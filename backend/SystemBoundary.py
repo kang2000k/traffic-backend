@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, redirect
 from flask_cors import CORS
 from backend.Controller import PullingConfiguration, TableConfiguration, TrainedMLAlgorithm, Task, SystemAdmin
 from backend.Controller import SysLoginController, createPullingConfigurationController

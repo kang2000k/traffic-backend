@@ -23,7 +23,6 @@ class SystemAdmin:
         if user:
             # Validate the password
             isPasswordValid = self.check_password(user.hashed_password, password)
-            self.get_access_credentials()
 
         # Add session if the password is correct
         if isPasswordValid:
