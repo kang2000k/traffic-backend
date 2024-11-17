@@ -70,7 +70,12 @@ class SystemAdmin:
 
                 # use credentials to get the drive access
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES)
-                creds = flow.run_console()
+                auth_url, _ = flow.authorization_url(prompt='consent')
+                print("Please visit this URL to authorize the application:")
+                print(auth_url)
+
+                code = input("Enter the authorization code: ")
+                creds = flow.fetch_token(authorization_response=code)
 
                 # build the system admin google drive service
                 Model.sys_service = build('drive', 'v3', credentials=creds)
@@ -132,7 +137,12 @@ class SystemAdmin:
 
                 # use credentials file to create the token
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES)
-                creds = flow.run_console()
+                auth_url, _ = flow.authorization_url(prompt='consent')
+                print("Please visit this URL to authorize the application:")
+                print(auth_url)
+
+                code = input("Enter the authorization code: ")
+                creds = flow.fetch_token(authorization_response=code)
                 try:
                     # store the token to database
                     token = TokenModel.query.first()
