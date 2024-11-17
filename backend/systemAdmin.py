@@ -69,7 +69,7 @@ class SystemAdmin:
                     print("Credentials file created")
 
                 # use credentials to get the drive access
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES, redirect_uri='https://traffic-backend-n4iz.onrender.com/')
                 auth_url, _ = flow.authorization_url(prompt='consent')
                 print("Please visit this URL to authorize the application:")
                 print(auth_url)
@@ -136,7 +136,7 @@ class SystemAdmin:
                     print("Credentials file created")
 
                 # use credentials file to create the token
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES, redirect_uri='https://traffic-backend-n4iz.onrender.com/')
                 auth_url, _ = flow.authorization_url(prompt='consent')
                 print("Please visit this URL to authorize the application:")
                 print(auth_url)
