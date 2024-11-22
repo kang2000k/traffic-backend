@@ -64,7 +64,7 @@ def renewCredentials():
         return jsonify({"error": str(e)}), 500
 
 
-@SystemBoundary.route('/callbackR', methods=['GET'])
+@SystemBoundary.route('/callbackR', methods=['POST'])
 def callbackR():
     from backend.Model import TokenModel
     try:
@@ -120,7 +120,7 @@ def get_access_credentials():
         return jsonify({"error": str(e)}), 500
 
 
-@SystemBoundary.route('/callbackG', methods=['GET'])
+@SystemBoundary.route('/callbackG', methods=['POST'])
 def callback():
     try:
         code = request.args.get('code')
