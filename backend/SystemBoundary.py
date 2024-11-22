@@ -76,7 +76,7 @@ def callbackR():
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
                                                          state=request.args.get('state'),
-                                                         redirect_uri='http://127.0.0.1:5000/callbackR')
+                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
         authorization_response = request.url
         flow.fetch_token(authorization_response=authorization_response)
         credentials = flow.credentials
@@ -131,7 +131,7 @@ def callback():
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
                                                          state=request.args.get('state'),
-                                                         redirect_uri='http://127.0.0.1:5000/callbackG')
+                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackG')
         authorization_response = request.url
         flow.fetch_token(authorization_response=authorization_response)
         credentials = flow.credentials

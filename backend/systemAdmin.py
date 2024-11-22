@@ -69,7 +69,7 @@ class SystemAdmin:
 
                 # use credentials to get the drive access
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                                 redirect_uri='http://127.0.0.1:5000/callbackG')
+                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackG')
                 auth_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true',
                                                      prompt='consent')
                 return {'auth_url': auth_url, 'state': state, 'message': 'Please authenticate with Google'}
@@ -119,7 +119,7 @@ class SystemAdmin:
 
                 # use credentials to get the drive access
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                                 redirect_uri='http://127.0.0.1:5000/callbackR')
+                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
                 auth_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true',
                     prompt='consent')
                 return {'auth_url': auth_url, 'state': state, 'message': 'Please authenticate with Google'}
