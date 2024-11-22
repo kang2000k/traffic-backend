@@ -71,7 +71,7 @@ def callbackR():
         code = request.args.get('code')
 
         if not code:
-            return jsonify({'error': 'No authorization code provided'}), 400
+            return redirect('https://traffic-frontend-ip3j.onrender.com/renew?status=failed')
 
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
@@ -87,10 +87,10 @@ def callbackR():
             db.session.commit()
             # re-build the drive service
             Model.drive_service = build("drive", "v3", credentials=credentials)
-            return jsonify({'success': True}), 200
+            return redirect('https://traffic-frontend-ip3j.onrender.com/renew?status=success')
         except Exception as e:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+            return redirect('https://traffic-frontend-ip3j.onrender.com/renew?status=failed')
         finally:
             if os.path.exists("credentials.json"):
                 os.remove("credentials.json")
@@ -100,7 +100,7 @@ def callbackR():
         if os.path.exists("credentials.json"):
             os.remove("credentials.json")
             print("Credentials file removed")
-        return jsonify({'error': str(e)}), 500
+        return redirect('https://traffic-frontend-ip3j.onrender.com/renew?status=failed')
 
 
 # get the google drive service access
@@ -126,7 +126,7 @@ def callback():
         code = request.args.get('code')
 
         if not code:
-            return jsonify({'error': 'No authorization code provided'}), 400
+            return redirect('https://traffic-frontend-ip3j.onrender.com/getDriveServiceAccess?status=failed')
 
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
@@ -145,13 +145,13 @@ def callback():
             print("Credentials file removed")
 
         print('System Admin service is created successfully')
-        return jsonify({'success': True}), 200
+        return redirect('https://traffic-frontend-ip3j.onrender.com/getDriveServiceAccess?status=success')
     except Exception as e:
         print(e)
         if os.path.exists("credentials.json"):
             os.remove("credentials.json")
             print("Credentials file removed")
-        return jsonify({'error': str(e)}), 500
+        return redirect('https://traffic-frontend-ip3j.onrender.com/getDriveServiceAccess?status=failed')
 
 
 # logout
