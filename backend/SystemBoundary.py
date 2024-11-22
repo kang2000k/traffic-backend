@@ -22,6 +22,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 SystemBoundary = Blueprint('SystemBoundary', __name__)
 CORS(SystemBoundary, supports_credentials=True)
 
+state = ''
+
 
 # login api
 @SystemBoundary.route('/Login', methods=['POST'])
@@ -46,62 +48,96 @@ def login():
 
 
 # renew token api
-@SystemBoundary.route('/renew', methods=['GET'])
+@SystemBoundary.route('/renew', methods=['POST'])
 def renewCredentials():
-    controller = sysRenewController()
-    isRenewSuccess = controller.renew()
-    # check the re-new whether is successful
-    if isRenewSuccess:
-        return jsonify({"message": "Renew successful!"}), 200
-    else:
-        return jsonify({"error": "Renew failed!"}), 500
+    try:
+        global state
+        controller = sysRenewController()
+        data = controller.renew()
+        state = data.get('state')
+        return jsonify(data), 200
+    except Exception as e:
+        print(e)
+        if os.path.exists("credentials.json"):
+            os.remove("credentials.json")
+            print("Credentials file removed")
+        return jsonify({"error": str(e)}), 500
 
 
-@SystemBoundary.route('/callbackR')
+@SystemBoundary.route('/callbackR', methods=['GET'])
 def callbackR():
     from backend.Model import TokenModel
     try:
         code = request.args.get('code')
 
+        if not code:
+            return jsonify({'error': 'No authorization code provided'}), 400
+
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
-        creds = flow.fetch_token(authorization_response=request.url)
+                                                         state=request.args.get('state'),
+                                                         redirect_uri='http://127.0.0.1:5000/callbackR')
+        authorization_response = request.url
+        flow.fetch_token(authorization_response=authorization_response)
+        credentials = flow.credentials
         try:
             # store the token to database
             token = TokenModel.query.first()
-            token.token = creds.to_json()
+            token.token = credentials.to_json()
             db.session.commit()
             # re-build the drive service
-            Model.drive_service = build("drive", "v3", credentials=creds)
+            Model.drive_service = build("drive", "v3", credentials=credentials)
+            return jsonify({'success': True}), 200
         except Exception as e:
             db.session.rollback()
-            return False
+            return jsonify({'error': str(e)}), 500
         finally:
             if os.path.exists("credentials.json"):
                 os.remove("credentials.json")
                 print("Credentials file removed")
-
-        print('System Admin service is created successfully')
-        return True
     except Exception as e:
         print(e)
-        return False
+        if os.path.exists("credentials.json"):
+            os.remove("credentials.json")
+            print("Credentials file removed")
+        return jsonify({'error': str(e)}), 500
 
 
-@SystemBoundary.route('/callback')
+# get the google drive service access
+@SystemBoundary.route('/getGoogleAccess', methods=['POST'])
+def get_access_credentials():
+    try:
+        global state
+        controller = sysGetAccessController()
+        data = controller.get_access_credentials()
+        state = data.get('state')
+        return jsonify(data), 200
+    except Exception as e:
+        print(e)
+        if os.path.exists("credentials.json"):
+            os.remove("credentials.json")
+            print("Credentials file removed")
+        return jsonify({"error": str(e)}), 500
+
+
+@SystemBoundary.route('/callbackG', methods=['GET'])
 def callback():
     try:
         code = request.args.get('code')
 
+        if not code:
+            return jsonify({'error': 'No authorization code provided'}), 400
+
         # use credentials to get the drive access
         flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                         redirect_uri='https://traffic-backend-n4iz.onrender.com/callback')
-
-        creds = flow.fetch_token(authorization_response=request.url)
+                                                         state=request.args.get('state'),
+                                                         redirect_uri='http://127.0.0.1:5000/callbackG')
+        authorization_response = request.url
+        flow.fetch_token(authorization_response=authorization_response)
+        credentials = flow.credentials
 
         # build the system admin google drive service
-        Model.sys_service = build('drive', 'v3', credentials=creds)
+        Model.sys_service = build('drive', 'v3', credentials=credentials)
 
         # delete local credentials.json
         if os.path.exists("credentials.json"):
@@ -109,22 +145,13 @@ def callback():
             print("Credentials file removed")
 
         print('System Admin service is created successfully')
-        return True
+        return jsonify({'success': True}), 200
     except Exception as e:
         print(e)
-        return False
-
-
-# get the google drive service access
-@SystemBoundary.route('/getGoogleAccess', methods=['GET'])
-def get_access_credentials():
-    controller = sysGetAccessController()
-    isGetAccessSuccess = controller.get_access_credentials()
-    # check the access whether is successful
-    if isGetAccessSuccess:
-        return jsonify({"message": "Access credentials retrieved!"}), 200
-    else:
-        return jsonify({"error": "Access credentials not retrieved!"}), 500
+        if os.path.exists("credentials.json"):
+            os.remove("credentials.json")
+            print("Credentials file removed")
+        return jsonify({'error': str(e)}), 500
 
 
 # logout

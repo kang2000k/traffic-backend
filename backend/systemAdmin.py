@@ -1,11 +1,10 @@
 import bcrypt
 import io
-from flask import session, redirect
+from flask import session
 from backend.Model import SystemAdminModel, TokenModel, SCOPES, db
 from backend import Model
 import os
 from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
@@ -40,8 +39,9 @@ class SystemAdmin:
         try:
             # find the credentials file
             file_name = 'credentials.json'
+            folder_id = '1jZ5OH8nsTO9JtB2PB87BbsX7-sBiNc1x'
             results = Model.drive_service.files().list(
-                q=f"name='{file_name}'",
+                q=f"name='{file_name}' and '{folder_id}' in parents",
                 spaces='drive',
                 fields="files(id, name)"
             ).execute()
@@ -69,10 +69,10 @@ class SystemAdmin:
 
                 # use credentials to get the drive access
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callback')
-                auth_url, _ = flow.authorization_url(prompt='consent')
-
-                return redirect(auth_url)
+                                                                 redirect_uri='http://127.0.0.1:5000/callbackG')
+                auth_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true',
+                                                     prompt='consent')
+                return {'auth_url': auth_url, 'state': state, 'message': 'Please authenticate with Google'}
             else:
                 print("Credentials file is not found.")
                 return False
@@ -83,10 +83,6 @@ class SystemAdmin:
         except Exception as error:
             print(f"An error occurred: {error}")
             return False
-        finally:
-            if os.path.exists("credentials.json"):
-                os.remove("credentials.json")
-                print("Credentials file removed")
 
     # renew the token
     def renew_credentials(self):
@@ -123,24 +119,26 @@ class SystemAdmin:
 
                 # use credentials to get the drive access
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', scopes=SCOPES,
-                                                                 redirect_uri='https://traffic-backend-n4iz.onrender.com/callbackR')
-                auth_url, _ = flow.authorization_url(prompt='consent')
-
-                return redirect(auth_url)
+                                                                 redirect_uri='http://127.0.0.1:5000/callbackR')
+                auth_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true',
+                    prompt='consent')
+                return {'auth_url': auth_url, 'state': state, 'message': 'Please authenticate with Google'}
             else:
                 print("Credentials file is not found.")
                 return False
         # handle error and exception and return false
         except HttpError as error:
             print(f"An error occurred: {error}")
-            return False
-        except Exception as error:
-            print(f"An error occurred: {error}")
-            return False
-        finally:
             if os.path.exists("credentials.json"):
                 os.remove("credentials.json")
                 print("Credentials file removed")
+            return False
+        except Exception as error:
+            print(f"An error occurred: {error}")
+            if os.path.exists("credentials.json"):
+                os.remove("credentials.json")
+                print("Credentials file removed")
+            return False
 
 
 
