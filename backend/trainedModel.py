@@ -27,7 +27,7 @@ class TrainedMLAlgorithm:
     def trainModel(model):
         from backend.app import app
         with app.app_context():
-            import Model
+            from backend import Model
             try:
                 new_model = ModelTrainedModel(
                     name=model.name,
